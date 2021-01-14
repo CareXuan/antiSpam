@@ -1,0 +1,28 @@
+mysql:
+  host: localhost
+  port: 3306
+  username: aaaa
+  password: aaaa
+  dbname: aaaa
+
+redis:
+  host: localhost
+  port: 6379
+
+beanstalkd:
+  host: localhost
+  port: 11300
+  network: tcp
+
+dun:
+  secret_key:
+  secret_id:
+  business_id:
+  moment_image_business_id:
+  content_url:
+  content_version:
+  image_url:
+  image_version:
+
+shumei:
+  access_key:
