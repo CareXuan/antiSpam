@@ -19,5 +19,9 @@ func RouteInit(r *gin.Engine) {
 			shumei.POST("/video", ShuMei2.ApiShuMeiPostVideoCheck)
 			shumei.POST("/video/result", ShuMei2.ApiShuMeiPostVideoResult)
 		}
+		//callback := v1.Group("callback")
+		//{
+		//	callback.POST("/video")
+		//}
 	}
 }

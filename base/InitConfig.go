@@ -16,6 +16,7 @@ type Yaml struct {
 	BeanStalkd BeanStalkd `yaml:"beanstalkd"`
 	Dun        Dun        `yaml:"dun"`
 	ShuMei     ShuMei     `yaml:"shumei"`
+	Logger     Logger     `yaml:"logger"`
 }
 
 type Mysql struct {
@@ -47,11 +48,17 @@ type ShuMei struct {
 	AccessKey string `yaml:"access_key"`
 }
 
+type Logger struct {
+	AccessLog string `yaml:"access_log"`
+	ErrorLog  string `yaml:"error_log"`
+}
+
 type Config struct {
 	Mysql  *sql.DB
 	Bean   *beanstalk.Conn
 	Dun    Dun
 	ShuMei ShuMei
+	Logger Logger
 }
 
 func loadYaml(path string) (*Yaml, error) {
@@ -83,6 +90,10 @@ func initShuMei(shuMei ShuMei) ShuMei {
 	return shuMei
 }
 
+func initLogger(logger Logger) Logger {
+	return logger
+}
+
 func initBeanStalkd(bs BeanStalkd) (*beanstalk.Conn, error) {
 	c, err := beanstalk.Dial(bs.NetWork, strings.Join([]string{bs.Host, ":", bs.Port}, ""))
 	return c, err
@@ -97,12 +108,15 @@ func Init(yamlPath string) error {
 	Bs, err := initBeanStalkd(yaml.BeanStalkd)
 	Ns := initDun(yaml.Dun)
 	Sm := initShuMei(yaml.ShuMei)
+	logger := initLogger(yaml.Logger)
+	initXLog(logger.AccessLog, logger.ErrorLog)
 
 	conf := &Config{}
 	conf.Mysql = Db
 	conf.Bean = Bs
 	conf.Dun = Ns
 	conf.ShuMei = Sm
+	conf.Logger = logger
 	Conf = conf
 	return nil
 }

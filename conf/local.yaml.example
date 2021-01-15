@@ -26,3 +26,7 @@ dun:
 
 shumei:
   access_key:
+
+logger:
+  access_log:
+  error_log:
