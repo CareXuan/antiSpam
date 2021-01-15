@@ -43,6 +43,7 @@ func DunImageCheck(images []models.Data, checkLabels []string) (DunImageCheckRes
 		imageData.Type = 1
 		imageData.Data = images[m].Content
 		imageArr = append(imageArr, imageData)
+		base.Info("unique_id:" + images[m].UniqueId + " url:" + images[m].Content)
 	}
 	result, _ := json.Marshal(imageArr)
 	params := url.Values{
@@ -59,6 +60,7 @@ func DunImageCheck(images []models.Data, checkLabels []string) (DunImageCheckRes
 	}
 	var re DunImageCheckResponse
 	err = json.Unmarshal([]byte(jsonStr), &re)
+	base.Info("response:" + jsonStr)
 	if err != nil {
 		return DunImageCheckResponse{}, err
 	}

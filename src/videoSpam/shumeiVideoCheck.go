@@ -1,6 +1,7 @@
 package videoSpam
 
 import (
+	"antispam/base"
 	"antispam/common"
 	"antispam/models"
 	"encoding/json"
@@ -59,6 +60,7 @@ func ShuMeiVideoContentCheck(data []models.Data, model []string) (map[string]mod
 			} else {
 				var re VideoCheckResponse
 				err = json.Unmarshal([]byte(result), &re)
+				base.Info("unique_id:" + data[m].UniqueId + ",content:" + data[m].Content + ",response:" + result + ",callback:" + data[m].Callback)
 				if err != nil {
 					r.Status = "FAIL"
 				} else {
