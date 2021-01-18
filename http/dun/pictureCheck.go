@@ -25,6 +25,7 @@ func ApiDunPostPictureCheck(c *gin.Context) {
 	perUrls := src.PictureCheckFirstStep(requestBody.Data)
 	result, err := src.DunPictureCheckSecondStep(perUrls, requestBody.Model)
 	if err != nil {
+		base.AddMongoOne("carexuan", "error", bson.M{"taskId": requestBody.TaskId, "type": "picture", "msg": err})
 		base.Forbidden(c, "调用三方sdk失败", err)
 	}
 	finalResult := src.PictureCheckThirdStep(result)
