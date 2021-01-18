@@ -1,4 +1,4 @@
-package ShuMei
+package shumei
 
 import (
 	"antispam/base"

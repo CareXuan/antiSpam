@@ -1,8 +1,8 @@
 package http
 
 import (
-	ShuMei2 "antispam/http/ShuMei"
 	netease2 "antispam/http/dun"
+	ShuMei2 "antispam/http/shumei"
 	"github.com/gin-gonic/gin"
 )
 
