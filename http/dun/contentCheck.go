@@ -4,7 +4,6 @@ import (
 	"antispam/base"
 	"antispam/models"
 	"antispam/src"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"strings"
@@ -21,14 +20,14 @@ func ApiDunPostContentCheck(c *gin.Context) {
 	}
 	_, err = base.AddMongoOne("carexuan", "task", bson.M{"_id": requestBody.TaskId, "type": "content", "models": strings.Join(requestBody.Model, ","), "data": requestBody.Data})
 	if err != nil {
-		base.AddMongoOne("carexuan", "error", bson.M{"taskId": requestBody.TaskId, "msg": err})
+		base.AddMongoOne("carexuan", "error", bson.M{"taskId": requestBody.TaskId, "type": "content", "msg": err})
 	}
 	preData := src.ContentCheckFirstStep(requestBody.Data)
 	result := src.DunContentCheckSecondStep(preData, requestBody.Model)
 	finalResult := src.ContentCheckThirdStep(result)
 	_, err = base.UpdateMongoOne("carexuan", "task", bson.M{"_id": requestBody.TaskId}, bson.M{"result": finalResult})
 	if err != nil {
-		fmt.Print(err)
+		base.AddMongoOne("carexuan", "error", bson.M{"taskId": requestBody.TaskId, "type": "content", "msg": err})
 	}
 	base.PostOk(c, "check finish", finalResult)
 	return

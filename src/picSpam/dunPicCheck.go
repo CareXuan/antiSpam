@@ -5,6 +5,7 @@ import (
 	"antispam/common"
 	"antispam/models"
 	"encoding/json"
+	"go.mongodb.org/mongo-driver/bson"
 	"net/url"
 )
 
@@ -44,6 +45,12 @@ func DunImageCheck(images []models.Data, checkLabels []string) (DunImageCheckRes
 		imageData.Data = images[m].Content
 		imageArr = append(imageArr, imageData)
 		base.Info("unique_id:" + images[m].UniqueId + " url:" + images[m].Content)
+		_, err := base.FindMongoOne("carexuan", "picture_check", bson.M{"_id": images[m].UniqueId})
+		if err == nil {
+			base.AddMongoOne("carexuan", "check_error", bson.M{"unique_id": images[m].Content, "type": "picture", "content": images[m].Content})
+			continue
+		}
+		base.AddMongoOne("carexuan", "picture_check", bson.M{"_id": images[m].UniqueId, "content": images[m].Content})
 	}
 	result, _ := json.Marshal(imageArr)
 	params := url.Values{
@@ -63,6 +70,9 @@ func DunImageCheck(images []models.Data, checkLabels []string) (DunImageCheckRes
 	base.Info("response:" + jsonStr)
 	if err != nil {
 		return DunImageCheckResponse{}, err
+	}
+	for i := range re.Antispam {
+		base.UpdateMongoOne("carexuan", "picture_check", bson.M{"_id": re.Antispam[i].Name}, bson.M{"sdk_response": re.Antispam[i]})
 	}
 	return re, nil
 }

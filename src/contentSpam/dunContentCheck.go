@@ -45,6 +45,14 @@ func DunContentCheck(data []models.Data, checkLabels string) map[string]models.C
 		go func(wg *sync.WaitGroup, m int) {
 			defer wg.Done()
 			var result models.ContentResult
+			_, err := base.FindMongoOne("carexuan", "content_check", bson.M{"_id": data[m].UniqueId})
+			if err == nil {
+				base.AddMongoOne("carexuan", "check_error", bson.M{"unique_id": data[m].Content, "type": "content", "content": data[m].Content})
+				result.Status = models.PictureActionMapping[2]
+				result.Msg = "unique id exist"
+				responses[data[m].UniqueId] = result
+				return
+			}
 			params := url.Values{
 				"content":     []string{data[m].Content},
 				"dataId":      []string{data[m].UniqueId},
@@ -56,15 +64,17 @@ func DunContentCheck(data []models.Data, checkLabels string) map[string]models.C
 
 			jsonStr, err := common.BaseCheck(params, apiUrl)
 			if err != nil {
+				base.AddMongoOne("carexuan", "check_error", bson.M{"unique_id": data[m].UniqueId, "type": "content", "content": "sdk check fail", "sdk_response": nil})
 				result.Status = models.PictureActionMapping[2]
 			} else {
 				re := DunContentCheckResponse{}
 				err = json.Unmarshal([]byte(jsonStr), &re)
-				base.AddMongoOne("carexuan", "content_check", bson.M{"_id": data[m].UniqueId, "content": data[m].Content, "sdk_response": jsonStr})
-				base.Info("unique_id:" + data[m].UniqueId + ",content:" + data[m].Content + ",response:" + jsonStr)
 				if err != nil {
+					base.AddMongoOne("carexuan", "check_error", bson.M{"unique_id": data[m].UniqueId, "type": "content", "content": "json unmarshal fail", "sdk_response": nil})
 					result.Status = models.PictureActionMapping[2]
 				} else {
+					base.AddMongoOne("carexuan", "content_check", bson.M{"_id": data[m].UniqueId, "content": data[m].Content, "sdk_response": jsonStr})
+					base.Info("unique_id:" + data[m].UniqueId + ",content:" + data[m].Content + ",response:" + jsonStr)
 					result.Status = models.PictureActionMapping[re.Result.Action]
 				}
 			}
