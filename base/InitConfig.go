@@ -1,12 +1,16 @@
 package base
 
 import (
+	"context"
 	"database/sql"
 	"github.com/beanstalkd/go-beanstalk"
 	_ "github.com/go-sql-driver/mysql"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"gopkg.in/yaml.v2"
 	"os"
 	"strings"
+	"time"
 )
 
 var Conf *Config
@@ -17,6 +21,7 @@ type Yaml struct {
 	Dun        Dun        `yaml:"dun"`
 	ShuMei     ShuMei     `yaml:"shumei"`
 	Logger     Logger     `yaml:"logger"`
+	MongoDB    MongoDB    `yaml:"mongodb"`
 }
 
 type Mysql struct {
@@ -53,12 +58,20 @@ type Logger struct {
 	ErrorLog  string `yaml:"error_log"`
 }
 
+type MongoDB struct {
+	Host     string `yaml:"host"`
+	Port     string `yaml:"port"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+}
+
 type Config struct {
-	Mysql  *sql.DB
-	Bean   *beanstalk.Conn
-	Dun    Dun
-	ShuMei ShuMei
-	Logger Logger
+	Mysql   *sql.DB
+	Bean    *beanstalk.Conn
+	MongoDB *mongo.Client
+	Dun     Dun
+	ShuMei  ShuMei
+	Logger  Logger
 }
 
 func loadYaml(path string) (*Yaml, error) {
@@ -99,6 +112,17 @@ func initBeanStalkd(bs BeanStalkd) (*beanstalk.Conn, error) {
 	return c, err
 }
 
+func initMongoDB(mg MongoDB) (*mongo.Client, error) {
+	client, _ := mongo.NewClient(options.Client().ApplyURI("mongodb://" + mg.Username + ":" + mg.Password + "@" + mg.Host + ":" + mg.Port))
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	err := client.Connect(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
+}
+
 func Init(yamlPath string) error {
 	yaml, err := loadYaml(yamlPath)
 	if err != nil {
@@ -106,6 +130,7 @@ func Init(yamlPath string) error {
 	}
 	Db, err := initMysql(yaml.Mysql)
 	Bs, err := initBeanStalkd(yaml.BeanStalkd)
+	Mg, err := initMongoDB(yaml.MongoDB)
 	Ns := initDun(yaml.Dun)
 	Sm := initShuMei(yaml.ShuMei)
 	logger := initLogger(yaml.Logger)
@@ -114,6 +139,7 @@ func Init(yamlPath string) error {
 	conf := &Config{}
 	conf.Mysql = Db
 	conf.Bean = Bs
+	conf.MongoDB = Mg
 	conf.Dun = Ns
 	conf.ShuMei = Sm
 	conf.Logger = logger

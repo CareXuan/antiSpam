@@ -30,3 +30,9 @@ shumei:
 logger:
   access_log:
   error_log:
+
+mongodb:
+  host:
+  port:
+  username:
+  password:

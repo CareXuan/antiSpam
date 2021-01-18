@@ -6,16 +6,36 @@ import (
 	"fmt"
 )
 
-type T1 struct {
-	Id  int64
-	Val int64
-}
-
 func main() {
 	err := base.Init("./conf/local.yaml")
 	if err != nil {
 		fmt.Print(err)
 	}
+
+	//client := base.Conf.MongoDB
+	//collection := client.Database("carexuan").Collection("test")
+	//ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	//defer cancel()
+	//res, err := collection.InsertOne(ctx, bson.M{"aaa": "bbb"})
+	//if err != nil {
+	//	fmt.Print(err)
+	//}
+	//fmt.Print(res)
+	//client, _ := mongo.NewClient(options.Client().ApplyURI("mongodb://root:123456@localhost:27017"))
+	//ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	//defer cancel()
+	//err = client.Connect(ctx)
+	//if err != nil {
+	//	fmt.Print(err)
+	//}
+	//collect := base.GetMongoCollection("carexuan", "test")
+	//res, err := collect.InsertOne(base.Conf.Ctx, bson.M{"name": "carexuan759", "value": "7595991314"})
+	//base.UpdateOne("carexuan", "test", bson.M{"unique_id": "759599131415"}, bson.M{"aaa": "ccc"})
+	//res, err := collect.UpdateOne(base.Conf.Ctx, bson.M{"unique_id": "759599131415"}, bson.M{"$set": bson.M{"aaa": "bbb"}})
+	//if err != nil {
+	//	fmt.Print(err)
+	//}
+	//fmt.Print(res)
 	//result, err := src.ContentCheckSecondStep("裸聊", "759599", "PORN_AD")
 	//re, err := videoSpam.VideoContentResult("7595991314")
 	//if err != nil {

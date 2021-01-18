@@ -5,6 +5,7 @@ import (
 	"antispam/common"
 	"antispam/models"
 	"encoding/json"
+	"go.mongodb.org/mongo-driver/bson"
 	"net/url"
 	"sync"
 )
@@ -59,6 +60,7 @@ func DunContentCheck(data []models.Data, checkLabels string) map[string]models.C
 			} else {
 				re := DunContentCheckResponse{}
 				err = json.Unmarshal([]byte(jsonStr), &re)
+				base.AddMongoOne("carexuan", "content_check", bson.M{"_id": data[m].UniqueId, "content": data[m].Content, "sdk_response": jsonStr})
 				base.Info("unique_id:" + data[m].UniqueId + ",content:" + data[m].Content + ",response:" + jsonStr)
 				if err != nil {
 					result.Status = models.PictureActionMapping[2]
