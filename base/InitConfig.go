@@ -66,12 +66,14 @@ type MongoDB struct {
 }
 
 type Config struct {
-	Mysql   *sql.DB
-	Bean    *beanstalk.Conn
-	MongoDB *mongo.Client
-	Dun     Dun
-	ShuMei  ShuMei
-	Logger  Logger
+	Mysql               *sql.DB
+	Bean                *beanstalk.Conn
+	MongoDB             *mongo.Client
+	Dun                 Dun
+	ShuMei              ShuMei
+	Logger              Logger
+	ContentRequestChan  chan string
+	ContentResponseChan chan string
 }
 
 func loadYaml(path string) (*Yaml, error) {
@@ -142,6 +144,8 @@ func Init(yamlPath string) error {
 	conf.MongoDB = Mg
 	conf.Dun = Ns
 	conf.ShuMei = Sm
+	conf.ContentRequestChan = make(chan string, 10)
+	conf.ContentResponseChan = make(chan string, 10)
 	//conf.Logger = logger
 	Conf = conf
 	return nil

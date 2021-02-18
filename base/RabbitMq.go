@@ -23,7 +23,7 @@ func InitChannel(queue string) *amqp.Channel {
 	rabbitmq.conn, _ = amqp.Dial("amqp://guest:guest@localhost:5672/")
 	channel, _ := rabbitmq.conn.Channel()
 	_, err := channel.QueueDeclare(
-		"carexuan_test",
+		queue,
 		false,
 		false,
 		false,
@@ -36,10 +36,10 @@ func InitChannel(queue string) *amqp.Channel {
 	return channel
 }
 
-func Publish(channel *amqp.Channel,content string) error{
+func Publish(channel *amqp.Channel, queue string, content string) error {
 	err := channel.Publish(
 		"",
-		"carexuan_test",
+		queue,
 		false,
 		false,
 		amqp.Publishing{
