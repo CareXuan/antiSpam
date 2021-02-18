@@ -103,9 +103,9 @@ func initShuMei(shuMei ShuMei) ShuMei {
 	return shuMei
 }
 
-func initLogger(logger Logger) Logger {
-	return logger
-}
+//func initLogger(logger Logger) Logger {
+//	return logger
+//}
 
 func initBeanStalkd(bs BeanStalkd) (*beanstalk.Conn, error) {
 	c, err := beanstalk.Dial(bs.NetWork, strings.Join([]string{bs.Host, ":", bs.Port}, ""))
@@ -133,8 +133,8 @@ func Init(yamlPath string) error {
 	Mg, err := initMongoDB(yaml.MongoDB)
 	Ns := initDun(yaml.Dun)
 	Sm := initShuMei(yaml.ShuMei)
-	logger := initLogger(yaml.Logger)
-	initXLog(logger.AccessLog, logger.ErrorLog)
+	//logger := initLogger(yaml.Logger)
+	//initXLog(logger.AccessLog, logger.ErrorLog)
 
 	conf := &Config{}
 	conf.Mysql = Db
@@ -142,7 +142,7 @@ func Init(yamlPath string) error {
 	conf.MongoDB = Mg
 	conf.Dun = Ns
 	conf.ShuMei = Sm
-	conf.Logger = logger
+	//conf.Logger = logger
 	Conf = conf
 	return nil
 }

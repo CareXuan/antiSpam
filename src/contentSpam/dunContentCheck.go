@@ -62,7 +62,6 @@ func DunContentCheck(data []models.Data, checkLabels string) map[string]models.C
 				if err != nil {
 					result.Status = models.PictureActionMapping[2]
 				} else {
-					base.Info("unique_id:" + data[m].UniqueId + ",content:" + data[m].Content + ",response:" + jsonStr)
 					result.Status = models.PictureActionMapping[re.Result.Action]
 				}
 			}

@@ -4,14 +4,74 @@ import (
 	"antispam/base"
 	"antispam/http"
 	"fmt"
+	"github.com/streadway/amqp"
 )
+
+type RabbitMQ struct {
+	conn    *amqp.Connection
+	channel *amqp.Channel
+	//队列名称
+	QueueName string
+	//交换机
+	Exchange string
+	//key
+	key string
+	//连接信息
+	Mqurl string
+}
 
 func main() {
 	err := base.Init("./conf/local.yaml")
 	if err != nil {
 		fmt.Print(err)
 	}
-
+	//rabbitmq := &RabbitMQ{QueueName: "carexuan_test", Exchange: "carexuan_exchange", key: "testkey", Mqurl: "amqp://guest:guest@localhost:5672/"}
+	////创建RabbitMQ连接
+	//rabbitmq.conn, err = amqp.Dial("amqp://guest:guest@localhost:5672/")
+	//if err != nil {
+	//	fmt.Print(err)
+	//}
+	//channel, _ := rabbitmq.conn.Channel()
+	//_, err = channel.QueueDeclare(
+	//	"carexuan_test",
+	//	false,
+	//	false,
+	//	false,
+	//	false,
+	//	nil,
+	//)
+	//if err != nil {
+	//	fmt.Print(err)
+	//}
+	//err = channel.Publish(
+	//	"",
+	//	"carexuan_test",
+	//	false,
+	//	false,
+	//	amqp.Publishing{
+	//		ContentType: "text/plain",
+	//		Body:        []byte("哈哈哈哈"),
+	//	},
+	//)
+	//if err != nil {
+	//	fmt.Print(err)
+	//}
+	////msg, _, err := channel.Get("carexuan_test", true)
+	////if err != nil {
+	////	fmt.Print(err)
+	////}
+	//////fmt.Print(ok)
+	//////fmt.Print("\n")
+	////fmt.Print(string(msg.Body))
+	//forever := make(chan bool)
+	//msgs, err := channel.Consume("carexuan_test", "", false, false, false, false, nil)
+	//go func() {
+	//	for i := range msgs {
+	//		fmt.Print(string(i.Body))
+	//		i.Ack(true)
+	//	}
+	//	<-forever
+	//}()
 	//client := base.Conf.MongoDB
 	//collection := client.Database("carexuan").Collection("test")
 	//ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
